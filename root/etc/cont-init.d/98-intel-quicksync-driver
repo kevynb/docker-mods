@@ -1,0 +1,18 @@
+#!/usr/bin/with-contenv bash
+
+# Determine if setup is needed
+if [ ! -f "/usr/bin/apt" ]; then
+    echo "**** Image is not Ubuntu, skipping Intel-quicksync-driver install ****"
+    exit 0
+fi
+
+if [ $(uname -m) != "x86_64" ]; then
+    echo "**** Intel-quicksync-driver was not tested on something other than X86_64, skipping ****"
+    exit 0
+fi
+
+echo "**** Upgrade jellyfin-ffmpeg5 ****"
+apt install -y -u jellyfin-ffmpeg5
+
+echo "**** Installing intel-media-va-driver-non-free ****"
+apt-get install -y intel-media-va-driver-non-free

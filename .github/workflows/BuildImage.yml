@@ -3,9 +3,11 @@ name: Build Image
 on: [push, pull_request, workflow_dispatch]
 
 env:
-  ENDPOINT: "linuxserver/mods" #don't modify
-  BASEIMAGE: "replace_baseimage" #replace
-  MODNAME: "replace_modname" #replace
+  # ENDPOINT: "linuxserver/mods" #don't modify
+  ENDPOINT: "kevynb/docker-mods" #don't modify
+  BASEIMAGE: "jellyfin"
+  MODNAME: "syno-transcode"
+  BRANCH: "jellyfin-syno-transcode"
 
 jobs:
   build:

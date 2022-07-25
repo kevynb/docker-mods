@@ -1,25 +1,27 @@
-# Rsync - Docker mod for openssh-server
+# Jellyfin Synology transcode - Docker mod for HW transcoding with Jellyfin on Synology NAS
 
-This mod adds rsync to openssh-server, to be installed/updated during container start.
+This mod adds packages to enable transcoding for synology NAS to jellyfin, to be installed/updated during container start.
 
-In openssh-server docker arguments, set an environment variable `DOCKER_MODS=linuxserver/mods:openssh-server-rsync`
+Successfully tested on a DS918+. I enabled VAAPI, was not able to get QSV to work for now.
 
-If adding multiple mods, enter them in an array separated by `|`, such as `DOCKER_MODS=linuxserver/mods:openssh-server-rsync|linuxserver/mods:openssh-server-mod2`
+In jellyfin docker arguments, set an environment variable `DOCKER_MODS=kevynb/mods:jellyfin-syno-transcode`
 
-# Mod creation instructions
+If adding multiple mods, enter them in an array separated by `|`, such as `DOCKER_MODS=kevynb/mods:jellyfin-syno-transcode|linuxserver/mods:jellyfin-mod2`
 
-* Fork the repo, create a new branch based on the branch `template`.
-* Edit the `Dockerfile` for the mod. `Dockerfile.complex` is only an example and included for reference; it should be deleted when done.
-* Inspect the `root` folder contents. Edit, add and remove as necessary.
-* Edit this readme with pertinent info, delete these instructions.
-* Finally edit the `.github/workflows/BuildImage.yml`. Customize the build branch, and the vars for `BASEIMAGE` and `MODNAME`.
-* Ask the team to create a new branch named `<baseimagename>-<modname>`. Baseimage should be the name of the image the mod will be applied to. The new branch will be based on the `template` branch.
-* Submit PR against the branch created by the team.
+Do not forget to add the devices to the compose file
 
+```
+    devices:
+      - /dev/dri/renderD128:/dev/dri/renderD128
+      - /dev/dri/card0:/dev/dri/card0
+```
 
-## Tips and tricks
+You also need to give access to the device from the NAS.
 
-* To decrease startup times when multiple mods are used, we have consolidated `apt-get update` down to one file. As seen in the [nodejs mod](https://github.com/linuxserver/docker-mods/tree/code-server-nodejs/root/etc/cont-init.d)
-* Some images has helpers built in, these images are currently:
-    * [Openvscode-server](https://github.com/linuxserver/docker-openvscode-server/pull/10/files)
-    * [Code-server](https://github.com/linuxserver/docker-code-server/pull/95)
+Quick and dirty way is to run this command on the synology:
+
+```
+sudo chmod 666 /dev/dri/renderD128
+```
+
+A better way would be to create a group and add the user running jellyfin to it and then to only `chmod 660` but I was not able to get this working properly (and did not want to spent too much time investigating).
